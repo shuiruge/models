@@ -62,7 +62,7 @@ class EmbeddingSharedWeights(tf.layers.Layer):
     """Get token embeddings of x.
 
     Args:
-      x: An int64 tensor with shape [batch_size, length]
+      x: An int64 tensor with shape [batch_size, length].
     Returns:
       embeddings: float32 tensor with shape [batch_size, length, embedding_size]
       padding: float32 tensor with shape [batch_size, length] indicating the
@@ -73,7 +73,9 @@ class EmbeddingSharedWeights(tf.layers.Layer):
       mask = tf.to_float(tf.not_equal(x, 0))
 
       if self.method == "gather":
+        # [batch_size, length, embedding_size]
         embeddings = tf.gather(self.shared_weights, x)
+        # For keeping the zero-paddings vanishing
         embeddings *= tf.expand_dims(mask, -1)
       else:  # matmul
         embeddings = tpu_utils.embedding_matmul(
